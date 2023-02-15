@@ -121,13 +121,18 @@ module OmniAuth
         verifier = request.params['code']
         redirect_uri = request.params['redirect_uri']
         access_token = request.params['access_token']
+        OmniAuth.logger.send(:error, "omniauth2 google get_access_token")
+        OmniAuth.logger.send(:error, "code: #{verifier}, redirect_uri: #{redirect_uri}, xhr: #{request.xhr?}")
         if verifier && request.xhr?
+          OmniAuth.logger.send(:error, "verifier && request.xhr?")
           client_get_token(verifier, redirect_uri || 'postmessage')
         elsif verifier
+          OmniAuth.logger.send(:error, "verifier")
           client_get_token(verifier, redirect_uri || callback_url)
         elsif access_token && verify_token(access_token)
           ::OAuth2::AccessToken.from_hash(client, request.params.dup)
         elsif request.content_type =~ /json/i
+          OmniAuth.logger.send(:error, "request.content_type =~ /json/i")
           begin
             body = JSON.parse(request.body.read)
             request.body.rewind # rewind request body for downstream middlewares
